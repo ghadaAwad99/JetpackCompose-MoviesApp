@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -13,10 +14,13 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.example.moviewapp.model.MovieModel
@@ -28,7 +32,11 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Scaffold(topBar = { TopAppBar(title = { Text(text = "Movies App") }) }) {
+            Scaffold(topBar = {
+                TopAppBar(
+                    backgroundColor = colorResource(id = R.color.dark_blue),
+                    title = { Text(text = "Movies App", color = Color.White) })
+            }) {
                 MoviewAppTheme {
                     Surface(color = MaterialTheme.colors.background) {
                         MoviesList(moviesList = moviesViewModel.moviesList)
@@ -40,18 +48,31 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun moviesApp() {
+    MovieItem(
+        movie = MovieModel(
+            name = "Coco",
+            desc = "Coco is a 2017 American 3D computer-animated musical fantasy adventure film produced by Pixar",
+            imageUrl = "https://howtodoandroid.com/images/coco.jpg",
+            category = "Latest"
+        )
+    )
+}
+
 
 @Composable
 fun MovieItem(movie: MovieModel) {
     Card(
         modifier = Modifier
-            .padding(8.dp, 4.dp)
+            .padding(8.dp, 8.dp)
             .fillMaxWidth()
-            .height(110.dp),
+            .height(150.dp),
         shape = RoundedCornerShape(8.dp),
-        elevation = 8.dp
-    ) {
-        Surface() {
+        elevation = 8.dp,
+        ) {
+        Surface(color = colorResource(id = R.color.card)) {
             Row(
                 Modifier
                     .padding(8.dp)
@@ -69,32 +90,33 @@ fun MovieItem(movie: MovieModel) {
                     contentDescription = movie.desc,
                     modifier = Modifier
                         .fillMaxHeight()
-                        .weight(0.2f)
+                        .weight(0.4f)
                 )
                 Column(
                     verticalArrangement = Arrangement.Center,
                     modifier = Modifier
-                        .padding(4.dp)
-                        .fillMaxHeight()
+                        .padding(10.dp)
                         .weight(0.8f)
                 ) {
                     Text(
                         text = movie.name,
                         style = MaterialTheme.typography.subtitle1,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        fontSize = 16.sp,
                     )
                     Text(
                         text = movie.category,
                         style = MaterialTheme.typography.caption,
-                        modifier = Modifier
-                            .padding(4.dp),
                         color = Color.LightGray
                     )
                     Text(
+                        fontSize = 13.sp,
                         text = movie.desc,
                         style = MaterialTheme.typography.body1,
                         overflow = TextOverflow.Ellipsis,
-                        maxLines = 2
+                        maxLines = 4,
+                        color = Color.White
                     )
 
                 }
@@ -106,7 +128,7 @@ fun MovieItem(movie: MovieModel) {
 
 @Composable
 fun MoviesList(moviesList: List<MovieModel>) {
-    LazyColumn {
+    LazyColumn(modifier = Modifier.background(colorResource(id = R.color.dark_blue))) {
         itemsIndexed(items = moviesList) { index, item ->
             MovieItem(movie = item)
         }
