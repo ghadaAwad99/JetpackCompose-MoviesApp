@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -17,8 +18,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
@@ -39,7 +38,11 @@ class MainActivity : ComponentActivity() {
             }) {
                 MoviewAppTheme {
                     Surface(color = MaterialTheme.colors.background) {
-                        MoviesList(moviesList = moviesViewModel.moviesList)
+                        MoviesList(moviesList = moviesViewModel.moviesList) {
+                            startActivity(
+                                DetailsActivity.newIntent(this, it)
+                            )
+                        }
                         moviesViewModel.getMovies()
                     }
                 }
@@ -48,6 +51,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/*
 @Preview(showBackground = true)
 @Composable
 fun moviesApp() {
@@ -57,13 +61,17 @@ fun moviesApp() {
             desc = "Coco is a 2017 American 3D computer-animated musical fantasy adventure film produced by Pixar",
             imageUrl = "https://howtodoandroid.com/images/coco.jpg",
             category = "Latest"
-        )
+        ),
+        {
+
+        }
     )
 }
+*/
 
 
 @Composable
-fun MovieItem(movie: MovieModel) {
+fun MovieItem(movie: MovieModel, navigateToDetails: (MovieModel) -> Unit) {
     Card(
         modifier = Modifier
             .padding(8.dp, 8.dp)
@@ -71,12 +79,13 @@ fun MovieItem(movie: MovieModel) {
             .height(150.dp),
         shape = RoundedCornerShape(8.dp),
         elevation = 8.dp,
-        ) {
+    ) {
         Surface(color = colorResource(id = R.color.card)) {
             Row(
                 Modifier
                     .padding(8.dp)
                     .fillMaxSize()
+                    .clickable { navigateToDetails(movie) }
             ) {
                 Image(
                     painter = rememberImagePainter(
@@ -127,10 +136,10 @@ fun MovieItem(movie: MovieModel) {
 }
 
 @Composable
-fun MoviesList(moviesList: List<MovieModel>) {
+fun MoviesList(moviesList: List<MovieModel>, navigateToDetails: (MovieModel) -> Unit) {
     LazyColumn(modifier = Modifier.background(colorResource(id = R.color.dark_blue))) {
         itemsIndexed(items = moviesList) { index, item ->
-            MovieItem(movie = item)
+            MovieItem(movie = item, navigateToDetails)
         }
     }
 }
